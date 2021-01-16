@@ -30,8 +30,6 @@ function readLine() {
 
 // Complete the maxSubsetSum function below.
 function maxSubsetSum(arr) {
-    let bestSum     = 0 ;
-    let currentSum  = 0;
     let arrayOfSums = [];
     if ( arr.length === 0 ) {
         return 0;
