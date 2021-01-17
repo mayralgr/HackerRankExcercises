@@ -37,39 +37,46 @@ function freqQuery(queries) {
         switch(queryType) {
             case 1: 
                 // Insert value in your data structure.
-                let qty = 0;
-                if (mapIntegers.has(valueQuery)) {
-                    qty = mapIntegers.get(valueQuery) + 1;
-                } else {
-                    qty = 1;
-                }
-                mapIntegers.set(valueQuery,qty);
-                if (mapCounter.has(qty)) {
-                    const qtyCounter = mapCounter.get(qty) + 1;
-                    mapCounter.set(qty,qtyCounter)
-                } else {
-                    mapCounter.set(qty,1)
-                }
+                const qtyOfValue = mapIntegers.get(valueQuery) || 0;
+                
+                // sum to the qty 
+                const newQty = qtyOfValue + 1;
+                mapIntegers.set(valueQuery,newQty);
+                
+                // substract the number if previous ocurrances in the counter
+                const originalQty = mapCounter.get(qtyOfValue);
+                mapCounter.set(qtyOfValue, originalQty - 1);
+                
+                // sum to the new qty
+                const qtyCounter = mapCounter.get(newQty) || 0;
+                mapCounter.set(newQty,qtyCounter + 1)
+                    
                 break;
             case 2:
                 // Delete one occurence of value from your data structure, if present.   
                 if (mapIntegers.has(valueQuery)) {
-                    const originalQty = mapIntegers.get(valueQuery);
-                     // update the original ocurrence
+                    const originalQty = mapIntegers.get(valueQuery) || 0 ;
+                    const newQty = originalQty - 1;
+                    if ( originalQty < 2) {
+                        mapIntegers.delete(valueQuery);
+                    } else {
+                        mapIntegers.set(valueQuery, newQty);
+                    }
+                    // update the original ocurrence
                     const originalQtyUpdated = mapCounter.get(originalQty) - 1;
                     mapCounter.set(originalQty,originalQtyUpdated)
-                    // delete one ocurrence
-                    const qty = mapIntegers.get(valueQuery) - 1;
-                    mapIntegers.set(valueQuery, qty );
-                   // update the new ocurrence
-                    const qtyCounterMinor = mapCounter.get( qty ) + 1;
-                    mapCounter.set( qty ,qtyCounterMinor)   
+                    if (originalQtyUpdated < 1) {
+                        mapCounter.delete(originalQty);
+                    }
+                    const qty = mapCounter.get(newQty) || 0;
+                    // update the new ocurrence
+                    mapCounter.set( newQty , qty +1 );
                 }
                 break;
             case 3: 
                 // Check if any integer is present whose frequency is exactly . 
                 // If yes, print 1 else 0
-                mapCounter.has(valueQuery) && mapCounter.get(valueQuery) > 0 ? arrayResponse.push(1) :arrayResponse.push(0);
+                mapCounter.has(valueQuery) && mapCounter.get(valueQuery) > 0 && valueQuery < queries.length ? arrayResponse.push(1) :arrayResponse.push(0);
                 break;
             default:
                 break;
