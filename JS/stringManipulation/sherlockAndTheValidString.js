@@ -26,34 +26,48 @@ function readLine() {
 
 // Complete the isValid function below.
 function isValid(s) {
-    console.log(s);
     let mapOfLetters = new Map();
-    let currentLetter;
-    let count;
+    
     for(let i = 0 ; i < s.length ; i++ ) {
-        currentLetter = s[ i ];
-        count = mapOfLetters.get( currentLetter ) || 0;
+        let currentLetter = s[ i ];
+        let count = mapOfLetters.get( currentLetter ) || 0;
         mapOfLetters.set(currentLetter, count + 1);   
     }
-    // check que map
-    let same = 0;
-    let eliminate = false;
+    
+    let min = Number.MAX_VALUE;
+    let max = Number.MIN_VALUE;
+    let frequencies = new Set(mapOfLetters.values());
+    if (frequencies.size === 1) {
+        return 'YES'
+    } else if ( frequencies.size > 2) {
+        return 'NO'
+    }
+    
+    min = Math.min(...Array.from(frequencies.values()));
+    max = Math.max(...Array.from(frequencies.values()));
+    // check que set with the map
     let equals = true;
-    mapOfLetters.forEach( (value,key) => {
-        if ( same === 0 ) {
-            same = value;
+    
+    let minFrequency = 0;
+    let maxFrequency = 0;
+    
+    mapOfLetters.forEach( value => {
+        if (value === min ) {
+            minFrequency += 1;
         }
-        if ( same !== value) {
-            if ( (same === value - 1) || (value - 1 === 0) && !eliminate ) {
-                eliminate = true;
-            }
-            else {
-                equals = false;
-                return;
-            }
+        if (value === max) {
+            maxFrequency += 1;
         }
     });
-    return equals ? 'YES': 'NO';
+    // can eliminate the min
+    if ( minFrequency === 1 && min === 1) {
+        return 'YES';
+    }
+    // can eliminate because the diference is 1 and the frequency is 1
+    if ( (max - min) === 1 && maxFrequency === 1 ) {
+        return 'YES';
+    }    
+    return 'NO';
 }
 
 function main() {
